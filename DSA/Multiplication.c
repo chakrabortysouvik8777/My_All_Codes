@@ -1,183 +1,187 @@
-//POLYNOMIAL ADDITION(PERFECT CODE, SORTED) Renewed
-
+MULTIPLICATION (SORTED)
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef struct link {
-    int coeff;
-    int pow;
-    struct link *next;
-} p;
-
-void my_create_poly(p **node);
-void my_show_poly(p *node);
-void my_add_poly(p **result, p *poly1, p *poly2);
-void p_add_ordered_term(p **poly, int coeff, int pow);
-
-int main() {
-    int ch;
-    p *poly1 = NULL, *poly2 = NULL, *poly3 = NULL;
-
-    do {
-        while (poly1 != NULL) {
-            p* temp = poly1;
-            poly1 = poly1->next;
-            free(temp);
-        }
-        while (poly2 != NULL) {
-            p* temp = poly2;
-            poly2 = poly2->next;
-            free(temp);
-        }
-        while (poly3 != NULL) {
-            p* temp = poly3;
-            poly3 = poly3->next;
-            free(temp);
-        }
-        
-        poly1 = poly2 = poly3 = NULL;
-
-        printf("\nCreate 1st expression\n");
-        my_create_poly(&poly1);
-        printf("\nStored the 1st expression\n");
-        my_show_poly(poly1);
-
-        printf("\n\nCreate 2nd expression\n");
-        my_create_poly(&poly2);
-        printf("\nStored the 2nd expression\n");
-        my_show_poly(poly2);
-
-        my_add_poly(&poly3, poly1, poly2);
-        printf("\nResultant expression after addition\n");
-        my_show_poly(poly3);
-
-        printf("\nAdd two more expressions? (Y = 1/N = 0): ");
-        scanf("%d", &ch);
-    } while (ch);
-
-    while (poly1 != NULL) {
-        p* temp = poly1;
-        poly1 = poly1->next;
-        free(temp);
-    }
-    while (poly2 != NULL) {
-        p* temp = poly2;
-        poly2 = poly2->next;
-        free(temp);
-    }
-    while (poly3 != NULL) {
-        p* temp = poly3;
-        poly3 = poly3->next;
-        free(temp);
-    }
-
-    return 0;
-}
-
-void my_create_poly(p **node) {
-    int flag, coeff, pow;
-    printf("\nContinue adding more terms to the polynomial list?(Y = 1/N = 0): ");
-    scanf("%d", &flag);
-    while (flag) {
-        printf("\nEnter Coeff:");
-        scanf("%d", &coeff);
-        printf("\nEnter Pow:");
-        scanf("%d", &pow);
-        p_add_ordered_term(node, coeff, pow);
-        printf("\nContinue adding more terms to the polynomial list?(Y = 1/N = 0): ");
-        scanf("%d", &flag);
-    }
-}
-
-void p_add_ordered_term(p **poly, int coeff, int pow) {
-    p *current = *poly;
-    p *prev = NULL;
-    p *new_term = NULL;
-
-    while (current != NULL && current->pow > pow) {
-        prev = current;
-        current = current->next;
-    }
-
-    if (current != NULL && current->pow == pow) {
-        current->coeff += coeff;
-    } else {
-        new_term = (p *)malloc(sizeof(p));
-        new_term->coeff = coeff;
-        new_term->pow = pow;
-        new_term->next = NULL;
-
-        if (prev == NULL) {
-            new_term->next = *poly;
-            *poly = new_term;
-        } else {
-            prev->next = new_term;
-            new_term->next = current;
-        }
-    }
-}
-
-void my_show_poly(p * node)
+typedef struct Node
 {
-printf("\nThe polynomial expression is:\n");
-while(node != NULL) 
-{ printf("%dx^%d", node->coeff, node->pow);
-node = node->next;
-if(node != NULL)
-printf(" + ");
-}
-}
-void my_add_poly(p ** result, p * poly1, p * poly2) 
+    // Define useful field of Node
+    int data;
+    int power;
+    struct Node * next;
+}Node;
+Node * getNode(int data, int power)
 {
-    p * tmp_node;
-    tmp_node = (p *) malloc(sizeof(p));
-    tmp_node->next = NULL;
-    *result = tmp_node;
-    while(poly1 && poly2) 
+    // Create dynamic memory of Node
+    Node * ref = (Node * ) malloc(sizeof(Node));
+    if (ref == NULL)
     {
-        if (poly1->pow > poly2->pow) 
-          {
-            tmp_node->pow = poly1->pow;
-            tmp_node->coeff = poly1->coeff;
-            poly1 = poly1->next;     
-          }
-        else if (poly1->pow < poly2->pow)
-          {
-            tmp_node->pow = poly2->pow;
-            tmp_node->coeff = poly2->coeff;
-            poly2 = poly2->next;    
-           }
-        else 
-          {
-            tmp_node->pow = poly1->pow;
-            tmp_node->coeff = poly1->coeff + poly2->coeff;
-            poly1 = poly1->next;
-            poly2 = poly2->next;        
-           }
-        if(poly1 && poly2) 
-         {
-            tmp_node->next = (p *) malloc(sizeof(p));
-            tmp_node = tmp_node->next;
-            tmp_node->next = NULL;        
-         }    
-     }
-    while(poly1 || poly2) 
+        // Failed to create memory 
+        return NULL;
+    }
+    ref->data = data;
+    ref->power = power;
+    ref->next = NULL;
+    return ref;
+}
+// Update node value
+void updateRecord(Node * ref, int data, int power)
+{
+    ref->data = data;
+    ref->power = power;
+}
+typedef struct MultiplyPolynomial
+{
+    // Define useful field of MultiplyPolynomial
+    struct Node * head;
+}MultiplyPolynomial;
+MultiplyPolynomial * getMultiplyPolynomial()
+{
+    // Create dynamic memory of MultiplyPolynomial
+    MultiplyPolynomial * ref = (MultiplyPolynomial * )
+                    malloc(sizeof(MultiplyPolynomial));
+    if (ref == NULL)
     {
-        tmp_node->next = (p *) malloc(sizeof(p));
-        tmp_node = tmp_node->next;
-        tmp_node->next = NULL;
-         if(poly1)
-         {
-            tmp_node->pow = poly1->pow;
-            tmp_node->coeff = poly1->coeff;
-            poly1 = poly1->next;        
-         }
-        if(poly2) 
+        // Failed to create memory 
+        return NULL;
+    }
+    ref->head = NULL;
+    return ref;
+}
+// Insert Node element
+void insert(MultiplyPolynomial * ref, int data, int power)
+{
+    if (ref->head == NULL)
+    {
+        // Add first node
+        ref->head = getNode(data, power);
+    }
+    else
+    {
+        Node * node = NULL;
+        Node * temp = ref->head;
+        Node * location = NULL;
+        // Find the valid new node location
+        while (temp != NULL && temp->power >= power)
         {
-            tmp_node->pow = poly2->pow;
-            tmp_node->coeff = poly2->coeff;
-            poly2 = poly2->next;        
-        }  
-     }
-     printf("\nAddition Complete");
+            location = temp;
+            temp = temp->next;
+        }
+        if (location != NULL && location->power == power)
+        {
+            // When polynomial power already exists
+            // Then add current add to previous data
+            location->data = location->data + data;
+        }
+        else
+        {
+            node = getNode(data, power);
+            if (location == NULL)
+            {
+                // When add node in begining
+                node->next = ref->head;
+                ref->head = node;
+            }
+            else
+            {
+                // When adding node in intermediate 
+                // location or end location
+                node->next = location->next;
+                location->next = node;
+            }
+        }
+    }
+}
+// Perform multiplication of given polynomial
+MultiplyPolynomial * multiplyPolynomials(
+  MultiplyPolynomial * ref, MultiplyPolynomial * other)
+{
+    // Define some useful variable
+    MultiplyPolynomial * result = getMultiplyPolynomial();
+    // Get first node of polynomial
+    Node * poly1 = ref->head;
+    Node * temp = other->head;
+    int power_value = 0;
+    int coefficient = 0;
+    // Execute loop until when polynomial are exist
+    while (poly1 != NULL)
+    {
+        temp = other->head;
+        while (temp != NULL)
+        {
+            // Get result info
+            power_value = poly1->power + temp->power;
+            coefficient = poly1->data * temp->data;
+            insert(result, coefficient, power_value);
+            // Visit to next node
+            temp = temp->next;
+        }
+        // Visit to next node
+        poly1 = poly1->next;
+    }
+    // return first node
+    return result;
+}
+void display(MultiplyPolynomial * ref)
+{
+    if (ref->head == NULL)
+    {
+        printf("Empty Polynomial ");
+    }
+    printf(" ");
+    Node * temp = ref->head;
+    while (temp != NULL)
+    {
+        if (temp != ref->head)
+        {
+            printf(" + %d", temp->data);
+        }
+        else
+        {
+            printf("%d",temp->data);
+        }
+        if (temp->power != 0)
+        {
+            printf("x^%d", temp->power);
+        }
+        // Visit to next node
+        temp = temp->next;
+    }
+    printf("\n");
+}
+int main()
+{
+    int f=1,c,p,i=1;
+	MultiplyPolynomial * a = getMultiplyPolynomial();
+	MultiplyPolynomial * b = getMultiplyPolynomial();
+	printf("Enter the elements of 1st polynomial :");
+	while(f==1)
+	{
+		printf("\nEnter Coefficient(%d): ",i);
+		scanf("%d",&c);
+		printf("Enter Power(%d): ",i++);
+		scanf("%d",&p);
+		insert(a, c, p);
+		printf("Enter Next Element (Yes = 1 / No = 0) : ");
+		scanf("%d",&f);
+	}
+	f=1;
+	i=1;
+	printf("\nEnter the elements of 2nd polynomial :");
+	while(f==1)
+	{
+		printf("\nEnter Coefficient(%d): ",i);
+		scanf("%d",&c);
+		printf("Enter Power(%d): ",i++);
+		scanf("%d",&p);
+		insert(b, c, p);
+		printf("Enter Next Element (Yes = 1 / No = 0) : ");
+		scanf("%d",&f);
+	}
+	printf("\n Polynomial A:\n");
+	display(a);
+	printf(" Polynomial B:\n");
+	display(b);
+	MultiplyPolynomial * result = multiplyPolynomials(a, b);
+	// Display calculated result
+	printf(" Result:\n");
+	display(result);
 }
